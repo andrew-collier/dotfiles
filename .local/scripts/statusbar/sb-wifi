@@ -1,0 +1,38 @@
+#!/bin/sh
+wifidisconnect(){
+	[[ $(cat /sys/class/net/w*/operstate) == 'up' ]] &&
+		nmcli device disconnect wlp2s0 &&
+		notify-send "Disconnected from wifi" ||
+		notify-send "Not connected to wifi"
+}
+
+
+getip() {
+	addr=$(curl ifconfig.me)
+}
+
+
+case $BUTTON in
+	1) $TERMINAL -e nmtui;;
+	2) wifidisconnect;;
+	3) notify-send "Network Stats:" "WAN IP: $(curl -s https://icanhazip.com)\n LAN IP: $(ip addr | grep inet | awk '{print $2}' | sed -n '3p')";;
+esac
+
+wifistate="$(cat /sys/class/net/w*/operstate)"
+case $wifistate in
+	'up') wifiicon="";;
+	'down') wifiicon="";;
+esac
+
+wirestate="$(cat /sys/class/net/e*/operstate)"
+case $wirestate in
+	'up' ) wireicon="";;
+	'down') wireicon="";;
+esac
+
+[ $wirestate == 'up' ] && [ $wifistate == 'up' ] && echo "$wireicon $wifiicon"
+[ $wirestate == 'up' ] && [ $wifistate == 'down' ] && echo "$wireicon"
+[ $wirestate == 'down' ] && [ $wifistate == 'up' ] && echo "$wifiicon"
+[ $wirestate == 'up' ] && [ $wifistate == 'down' ] && echo "$wireicon"
+[ $wirestate == 'down' ] && [ $wifistate == 'down' ] && echo "$wireicon"
+

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+typeset -a options
+options=" Lock\n Logout\n Shutdown\n Reboot"
+
+choice=$(echo $options | dmenu -i -fn "hack:size=10")
+
+case $choice in
+	' Lock') slock;;
+	' Logout') killall xinit && sleep 10 && logout;;
+	' Shutdown') poweroff;;
+	' Reboot') reboot;;
+esac

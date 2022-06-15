@@ -1,0 +1,16 @@
+#!/bin/sh
+xrdb -load "${XDG_CACHE_HOME:-$HOME/.cache}/wal/colors.Xresources" &
+wal -i ${XDG_CACHE_HOME:-$HOME/.cache}/currentwallpaper/*
+remaps &
+unclutter &
+mpd &
+pipewire &
+pipewire-pulse &
+wireplumber &
+picom &
+dunst &
+dwmblocks &
+
+while true; do
+	dwm 2> $HOME/.cache/dwm.log
+done

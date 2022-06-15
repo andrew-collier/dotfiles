@@ -1,0 +1,11 @@
+#! /bin/zsh
+wal -i $1 -q
+
+# trim filename to form <filename.ext>
+filename="$( echo "$1" | sed 's/.*\/\(.*$\)/\1/')"
+wpd="${XDG_CACHE_HOME:-$HOME/.cache}/currentwallpaper"
+rm $wpd/*
+cp "$1" "$wpd/$filename"
+kill -HUP $(pgrep -u $USER "\bdwm$")
+killall dunst && dunst &
+[ -f "$HOME/.fehbg" ] && rm "$HOME/.fehbg"

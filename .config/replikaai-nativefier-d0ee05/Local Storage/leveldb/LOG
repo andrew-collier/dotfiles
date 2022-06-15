@@ -1,0 +1,8 @@
+2022/06/15-15:04:25.919 186b9 Reusing MANIFEST /home/drew/.config/replikaai-nativefier-d0ee05/Local Storage/leveldb/MANIFEST-000001
+2022/06/15-15:04:25.920 186b9 Recovering log #3
+2022/06/15-15:04:25.920 186b9 Level-0 table #3: started
+2022/06/15-15:04:25.944 186b9 Level-0 table #3: 33509 bytes OK
+2022/06/15-15:04:25.944 186b9 Recovering log #4
+2022/06/15-15:04:25.945 186b9 Reusing old log /home/drew/.config/replikaai-nativefier-d0ee05/Local Storage/leveldb/000004.log 
+2022/06/15-15:04:25.951 186b9 Delete type=0 #3
+2022/06/15-15:04:25.951 186b9 Delete type=2 #5

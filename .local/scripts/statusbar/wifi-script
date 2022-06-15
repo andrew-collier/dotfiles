@@ -1,0 +1,77 @@
+#!/bin/sh
+
+wificonnect(){
+	# Notify that scan has begun
+	notify-send -t 4000 "Scanning networks in range..."
+	
+	# Calculate length of menu
+	len=$(nmcli device wifi list --rescan auto | wc -l)
+	[ $len -gt 15 ] && dlen=15 || dlen=$len
+	
+	# Display available networks in a menu and save the selection
+	selection=$(nmcli device wifi list --rescan no | dmenu -l $dlen)
+	
+	# Format SSID from selection
+	ssid=$(echo $selection | sed -e 's/^\(.\{18\}\)//' \
+		-e 's/\s[<Infra>|<Mesh>].*$//')
+	
+	# Format BSSID from selection
+	bssid=$(echo $selection | cut -c -17)
+	
+	# Determine if user chose currently connected network
+	[[ $(echo $selection | cut -c 1) == ' ' ]] && 
+		notify-send -t 2000 "Already connected to that network" && exit 0
+
+	# If no network specified, cancel
+	[ -z "$selection" ] && exit 0
+
+	verifyconnect(){
+		[[ $(cat /sys/class/net/wlp2s0/operstate) == 'up' ]] &&
+		notify-send "Successfully connected to $ssid" ||
+		notify-send "Failed to connect to $ssid"
+	}
+
+	c2unsecured(){
+		notify-send "Connecting to" "$ssid..." 
+		nmcli d wifi connect $bssid
+		verifyconnect
+	}
+
+	c2secured(){
+		pw=$(dmenu -P -p "$ssid passphrase:") 
+		notify-send "Connecting to" "$ssid..." 
+		nmcli d wifi connect $bssid password $pw 
+		verifyconnect
+	}
+
+	# Ask for password if required
+	if [[ $(echo $selection | awk '{print $NF}') != '--' ]]
+	then
+		c2unsecured
+	elif [ ! -z $(nmcli c show | grep $ssid) ]
+	then
+		c2unsecured
+	else
+		c2secured
+	fi
+
+	
+}
+
+wifidisconnect(){
+	[[ $(cat /sys/class/net/w*/operstate) == 'up' ]] &&
+		nmcli device disconnect wlp2s0 &&
+		notify-send "Disconnected from wifi" ||
+		notify-send "Not connected to wifi"
+}
+
+case $BUTTON in
+	1) wificonnect;;
+	2) wifidisconnect;;
+esac
+state="$(cat /sys/class/net/wlp2s0/operstate)"
+case $state in
+	'up') wifiicon="";;
+	'down') wifiicon="";;
+esac
+echo " $wifiicon"

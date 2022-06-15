@@ -1,0 +1,29 @@
+# HOME
+Wallpaper=$HOME/Pictures/wallpaper && : ~Wallpaper
+Music=$HOME/Music && : ~Music
+Downloads=$HOME/Downloads && : ~Downloads
+
+# INU
+INU=$HOME/inu && : ~INU
+iDocs=$HOME/inu/Documents && : ~iDocs
+iPics=$HOME/inu/Pictures && : ~iPics
+iMusic=$HOME/inu/Music && : ~iMusic
+iChan=$HOME/inu/4chan && : ~iChan
+iVideo=$HOME/inu/Videos && : ~iVideo
+library=$HOME/inu/Documents/library && : ~library
+
+# INU-VIDEO
+iFlix=$HOME/inu-video/movies && : ~iFlix
+iTV=$HOME/inu-video/shows && : ~iTV
+
+
+
+# CONFIGS ETC.
+config=$XDG_CONFIG_HOME && : ~config
+bin=$HOME/.local/bin && : ~bin
+src=$HOME/.local/src && : ~src
+scripts=$HOME/.local/scripts && : ~scripts
+data=$XDG_DATA_HOME && : ~data
+cache=$XDG_CACHE_HOME && : ~cache
+state=$XDG_STATE_HOME && : ~state
+

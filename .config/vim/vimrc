@@ -1,0 +1,50 @@
+"        _                    
+" __   _(_)_ __ ___  _ __ ___ 
+" \ \ / / | '_ ` _ \| '__/ __|
+"  \ V /| | | | | | | | | (__ 
+"   \_/ |_|_| |_| |_|_|  \___|
+
+set runtimepath^=$XDG_CONFIG_HOME/vim
+set runtimepath+=$XDG_DATA_HOME/vim
+set runtimepath+=$XDG_CONFIG_HOME/vim/after
+set packpath^=$XDG_DATA_HOME/vim,$XDG_CONFIG_HOME/vim
+set packpath+=$XDG_CONFIG_HOME/vim/after,$XDG_DATA_HOME/vim/after
+let g:netrw_home = $XDG_DATA_HOME."/vim"
+call mkdir($XDG_DATA_HOME."vim/spell" , 'p')
+set directory=$XDG_STATE_HOME/vim/backup | call mkdir(&backupdir, 'p')
+set directory=$XDG_STATE_HOME/vim/swap | call mkdir(&directory, 'p')
+set undodir=$XDG_STATE_HOME/vim/undo | call mkdir(&undodir, 'p')
+set viewdir=$XDG_STATE_HOME/vim/view | call mkdir(&viewdir, 'p')
+if !has('nvim') | set viminfofile=$XDG_STATE_HOME/vim/viminfo | endif
+set nocompatible
+syntax on
+set noerrorbells
+set tabstop=4 softtabstop=4
+set shiftwidth=4
+"set expandtab
+set smartindent
+set nu
+set nowrap
+set smartcase
+"set noswapfile
+"set nobackup
+set undofile
+set incsearch
+autocmd VimEnter * silent exec "! echo -ne '\e[1 q'"
+autocmd VimLeave * silent exec "! echo -ne '\e[4 q'"
+let &t_SI = "\e[4 q"
+let &t_EI = "\e[1 q"
+set ttimeout
+set ttimeoutlen=1
+set ttyfast
+
+set colorcolumn=80
+highlight ColorColumn ctermbg=0 guibg=lightgrey
+
+call plug#begin('~/.config/vim/plugged')
+Plug 'git@github.com:ycm-core/YouCompleteMe.git'
+Plug 'mbbill/undotree'
+Plug 'junegunn/goyo.vim'
+call plug#end()
+                            
+let mapleader = " "

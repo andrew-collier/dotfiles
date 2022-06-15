@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# toggles transparency on and off
+
+c="picom"
+
+[ -z $(pkill "$c") ] && ("$c" &) || pkill "$c"

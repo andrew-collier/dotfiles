@@ -1,0 +1,107 @@
+#!/bin/zsh
+# Shell aliases and shortcuts
+
+typeset -A abbrevs
+abbrevs=(
+	"..." "../.."
+	"...." "../../.."
+)
+
+# Sudo
+abbrevs+=(
+	"reboot" "sudo reboot"
+	"poweroff" "sudo poweroff"
+	"pacman" "sudo pacman"
+)
+
+
+alias ls="ls --color=auto -N"
+
+# git
+alias dotfiles='/usr/bin/git --git-dir=$HOME/git/dotfiles/ --work-tree=$HOME'
+
+
+# Directory shortcuts
+alias \
+	h="cd $HOME && ls -A" \
+	g="cd $HOME/.local/git/ && ls -A" \
+	dl="cd $HOME/Downloads && ls -A" \
+	d="cd $HOME/Documents && ls -A" \
+	p="cd $HOME/Pictures && ls -A" \
+	m="cd $HOME/Music && ls -A" \
+	i="cd $HOME/inu && ls -A" \
+	iv='cd $HOME/inu-video && ls -A' \
+	wget="wget --hsts-file=${XDG_CACHE_HOME:-$HOME/.cache}/wget-hsts" \
+	feh="feh --no-fehbg" \
+	iflix="cd $HOME/inu-video/movies && ls -A" \
+	itv="cd $HOME/inu-video/shows && ls -A" \
+	ichan="cd $HOME/inu/4chan && ls -A" \
+	idoc="cd $HOME/inu/Documents && ls -A" \
+	ipic="cd $HOME/inu/Pictures && ls -A" \
+	ivid="cd $HOME/inu/Videos && ls -A" \
+	ilib="cd $HOME/inu/Documents/library && ls -d" \
+	iwp="cd $HOME/inu/Pictures/wallpaper/1280x800 && ls" \
+
+abbrevs+=(
+	"cf" "cd $HOME/.config && ls -A"
+	"cfz" "cd $HOME/.config/zsh && ls -A"
+	"src" "cd $HOME/.local/src"
+	"bin" "cd $HOME/.local/bin && ls -A"
+	"rx" "cd $HOME/.local/scripts && ls -A"
+	"data" "cd $HOME/.local/share && ls -A"
+	"cache" "cd $HOME/.cache && ls -A"
+	"wp" "cd $HOME/Pictures/wallpaper && ls"
+)
+
+# Config shortcuts
+abbrevs+=(
+	"cfa" "$EDITOR $HOME/.config/zsh/aliasrc"
+	"cfzrc" "$EDITOR $HOME/.config/zsh/.zshrc"
+	"cfzp" "$EDITOR $HOME/.config/zsh/.zprofile"
+	"cfx" "$EDITOR $HOME/.config/x11/xinitrc"
+	"cflf" "$EDITOR $HOME/.config/lf/lfrc"
+    "cfv" "$EDITOR $HOME/.config/vim/vim"
+)
+
+# Suckless config shortcuts
+abbrevs+=(
+	"cfblk" "cd $HOME/.local/src/dwmblocks && $EDITOR blocks.def.h"
+	"cfdwm" "cd $HOME/.local/src/dwm && $EDITOR config.def.h"
+	"cfst" "cd $HOME/.local/src/st && $EDITOR config.def"
+)
+
+# Shortening long commands
+abbrevs+=(
+    "e" "$EDITOR"
+	"kumo" "ssh -i $HOME/.ssh/kumo.key drew@144.202.82.53 -p 22"
+	"br" "bulkrename"
+	"es" "edit-script"
+	"yt" "pipe-viewer"
+	"replika" "replika-nativefier"
+)
+
+# Pacman
+abbrevs+=(
+	"pm" "pacman"
+	"pms" "pacman -S"
+	"pmr" "pacman -R"
+	"pmrs" "pacman -Rs"
+	"pmq" "pacman -Q"
+	"pmqs" "pacman -Q | grep"
+)
+
+for abbr in ${(k)abbrevs}; do
+	alias $abbr="${abbrevs[$abbr]}"
+done
+
+magic-abbrev-expand() {
+	local MATCH
+	LBUFFER=${LBUFFER%%(#m)[_a-zA-Z0-9]#}
+	command=${abbrevs[$MATCH]}
+	LBUFFER+=${command:-$MATCH}
+	zle self-insert
+}
+
+zle -N magic-abbrev-expand
+bindkey " " magic-abbrev-expand
+bindkey -M isearch " " self-insert

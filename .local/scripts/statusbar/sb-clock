@@ -1,0 +1,8 @@
+#!/bin/sh
+output=$(date "+%F %R")
+printf '%s' "$output"
+
+case $BUTTON in
+	1) setsid -f "$TERMINAL" -e calcurse;;
+	3) notify-send "Calendar" "$(cal --color=always | sed "s/..7m/<b><span color=\"red\">/;s/..27m/<\/span><\/b>/")";;
+esac

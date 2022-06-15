@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+yt-dlp $(echo $1 | sed 's/.*\(...........\)/\1/') -o "$HOME/Downloads/yt/videos/%(title)s.%(ext)s"

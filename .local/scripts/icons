@@ -1,0 +1,33 @@
+#!/bin/zsh
+
+iconsfile="$XDG_DATA_HOME/icons"
+
+zparseopts -E -D -A opts \
+	f=flag -file=flag \
+	u=flag -unicode=flag \
+
+for flag in ${flag[@]}
+do
+	case $flag in
+		-u|--unicode) flag_unicode=true;;
+		-f|--file) flag_file=true;;
+		*) echo "Not a valid option" && exit 1;;
+	esac
+done
+
+# Get user selection via dmenu from emoji file.
+[ $flag_unicode ] && chosen=$(cat $iconsfile | dmenu -i -l 30 -fn "hack:size=10" | cut -d ';' -f2)
+[ ! $flag_unicode ] && chosen=$(cut -d ';' -f1 $iconsfile | dmenu -i -l 30 -fn "hack:size=10" | sed "s/ .*//")
+[ $flag_file ] && vim $iconsfile && exit
+
+# Exit if none chosen.
+[ -z "$chosen" ] && exit
+
+# If you run this command with an argument, it will automatically insert the
+# character. Otherwise, show a message that the emoji has been copied.
+if [ -n "$1" ]; then
+	xdotool type "$chosen"
+else
+	printf "$chosen" | xclip -selection clipboard
+	notify-send "'$chosen' copied to clipboard." &
+fi

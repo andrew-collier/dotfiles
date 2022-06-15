@@ -1,0 +1,22 @@
+#!/bin/zsh
+#[ -z $(ls ~/inu | head -n1) ] && mount "$HOME/inu"
+#[ -z $(ls ~/inu-video | head -n1) ] && mount "$HOME/inu-video"
+
+zparseopts -E -D -A opts \
+	v=flag -verbose=flag \
+
+for flag in ${flag[@]}
+do
+	case $flag in
+		-v|--verbose) flag_verbose=true;;
+	esac
+done
+
+
+
+if [ -z $(ls ~/inu | head -n1) ]
+then
+	mount "$HOME/inu" || [ $flag_verbose ] && echo "unable to mount"
+else
+	[ $flag_verbose ] && echo "already mounted"
+fi

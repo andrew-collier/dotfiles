@@ -1,0 +1,26 @@
+[[1;32mI[0m] [1;31mimage[0m: Using image [1;37mnature_simple-sunrise.jpg[0m.
+[[1;32mI[0m] [1;31mtheme[0m: Set theme to [1;37m_home_drew__cache_currentwallpaper_nature_simple-sunrise_jpg_dark_None_None_1.1.0.json[0m.
+[[1;32mI[0m] [1;31mcolors[0m: Found cached colorscheme.
+[[1;32mI[0m] [1;31mwallpaper[0m: Set the new wallpaper.
+[[1;32mI[0m] [1;31msequences[0m: Set terminal colors.
+[[1;32mI[0m] [1;31mexport[0m: Exported all files.
+[[1;32mI[0m] [1;31mexport[0m: Exported all user files.
+[[1;32mI[0m] [1;31mreload[0m: Reloaded environment.
+\e]P0100204
+                 \e]P14A7C89
+                 \e]P23A8198
+                 \e]P34F8599
+                 \e]P46E8C9F
+                 \e]P59F98A8
+                 \e]P6DEA4A4
+                 \e]P7f1d2d0
+                 \e]P8a89391
+                 \e]P94A7C89
+                 \e]PA3A8198
+                 \e]PB4F8599
+                 \e]PC6E8C9F
+                 \e]PD9F98A8
+                 \e]PEDEA4A4
+                 \e]PFf1d2d0
+                 \ec536870912
+Crash Annotation GraphicsCriticalError: |[C0][GFX1-]: Receive IPC close with reason=AbnormalShutdown (t=96.8658) [GFX1-]: Receive IPC close with reason=AbnormalShutdown

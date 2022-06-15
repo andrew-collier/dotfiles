@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+query=$(dmenu -p "Search for YouTube videos:" -fn "hack:size=10")
+setsid -f $TERMINAL -e pipe-viewer $query

@@ -1,0 +1,149 @@
+#!/bin/zsh
+
+help='weath -- CLI Weather Module
+
+USAGE: weath [options]
+
+By default, calling without options will display a 3-day weather forecast.
+If connected to the internet and the forecast data is more than 30 minutes
+old, then an updated forecast will be downloaded and displayed.
+
+OPTIONS:
+	-h	--	Display this help message
+	-c	--	Display current conditions only (minimal)
+	-u	--	Force update, if possible
+	-l	--	Specify location. Requires argument.
+	-L	--	Print location of currently cached report
+	-s	--	Silent (display nothing, can use when updating)
+	-n  --  Send console messages to notify-send
+	-v	--	Verbose output'
+
+zparseopts -E -D -A opts \
+	c=flag -current=flag \
+	h=flag -help=flag\
+	l:=location -set-locale:=location\
+	L=flag -show-locale=flag \
+	n=flag -notify=flag \
+	-notify-summary=flag \
+	s=flag -silent=flag \
+	u=flag -update=flag \
+	v=flag -verbose=flag \
+
+for flag in ${flag[@]}
+do
+	case $flag in
+		-c|--current) flag_current_only=true;;
+		-h|--help) echo $help && exit 0;;
+		-l|--set-locale) flag_locale_echo=true;;
+		-L|--show-locale);;
+		-n|--notify) flag_notify=true;;
+		--notify-summary) flag_notify_summary=true;;
+		-s|--silent) flag_silent=true;;
+		-u|--update) flag_update=true;;
+		-v|--verbose) flag_verbose=true;;
+		*) echo "Not a valid option" && exit 1;;
+	esac
+done
+
+# paths
+[ ! -d "$HOME/.cache/weather" ] && mkdir "$HOME/.cache/weather"
+dir="$HOME/.cache/weather"
+
+[ ! -f "$dir/forecast" ] && touch "$dir/forecast" && flag_update=true
+forecast="$dir/forecast"
+
+[ ! -f "$dir/current" ] && touch "$dir/current" && flag_update=true
+current="$dir/current"
+
+[ ! -f "$dir/location" ] && touch "$dir/location" && flag_update=true
+locale="$dir/location"
+
+[ ! -f "$dir/lastupdate" ] && touch "$dir/lastupdate" && flag_update=true
+lastupdate="$dir/lastupdate"
+
+[ ! -f "$dir/summary" ] && touch "$dir/summary" && flag_update=true
+summary="$dir/summary"
+
+message() {
+	[ $flag_verbose ] && echo "$1" && return
+	[ $flag_notify ] && notify-send "$1" && return
+}
+
+# variables
+threshold=900 # set how often to update, in seconds
+
+# update function
+update() {
+	# update current weather, short format
+	message "Updating current weather..."
+	curl -s "wttr.in/${location[2]}?format=1" | 
+		sed -e 's/^\(.\).\s/\1/' -e 's/+//' -e 's/F//' -e 's/ //' > $current ||
+		message "Unable to download current weather."
+
+	# update full forcast
+	message "Updating 3-day forcast..."
+	curl -s "wttr.in/${location[2]}" | sed '$ d' > $forecast ||
+		message "Unable to download weather forecast."
+
+	# document location of downloaded report
+	message "Finishing up..."
+	cat $forecast | head -n 1 - | sed -e 's/^.*:\s//' > $locale ||
+		message "Error updating locale"
+
+	# modify "last updated" file
+	echo "Updated $(date '+%m/%d %R')" > $lastupdate ||
+		message "Error modifying last update time"
+
+	# generate summary 
+	gensum() {
+		rm $summary
+		case "$(cat $lastupdate | cut -c 15-16)" in
+			0[0-9]|10) TOD=1;;
+			1[1-5]) TOD=2;;
+			1[6-9]) TOD=3;;
+			2[0-3]) TOD=4;;
+		esac &&
+
+
+		# Location
+		echo "    Location:\t$(cut -d',' -f 1-2 $locale)" >> $summary &&
+		
+		# Current conditions
+		echo "    Currently:\t$(head -n 3 $forecast | tail -n 1 | grep -wo "[A-Z|a-z].*$")" >> $summary &&
+
+		# Chance of rain/snow
+		echo "Percipitation:\t$(grep -wo "[0-9]*%" $forecast | awk 'NR=='$TOD'')" >> $summary &&
+
+		# Visability
+		echo "   Visability:\t$(awk 'NR==6' $forecast | grep -wo "[0-9]*\smi")" >> $summary &&
+
+		# Wind
+		echo "   Wind Speed:\t$(curl -s "wttr.in/${location[2]}?format=4" | grep -o "[0-9]*mph" | sed 's/mph/ mph/')" >> $summary &&
+		
+		# Footer (show when last updated)
+		echo "\n$(cat $lastupdate)" >> $summary
+	}
+	gensum || message "Error generating summary"
+}
+
+
+if [[ $flag_update || $(stat --format=%Y $forecast) -lt `expr $(date '+%s') - $threshold` ]] 
+then
+	# update
+	if [ $(cat /sys/class/net/*/operstate | grep up) ]
+	then
+		update || message "Error updating weather forecast" && exit 1
+	else
+		message "Unable to update weather: No internet connection."
+		exit 1
+	fi
+else
+	message "Cached forecast is current"
+fi
+
+
+# output
+[ $flag_notify_summary ] && notify-send "Current Conditions" "$(cat $summary)" && exit 0
+[ $flag_silent ] && exit 0
+[ $flag_locale_echo ] && cat $locale
+[ $flag_current_only ] && cat $current && exit 0 || less -R $forecast && exit 0

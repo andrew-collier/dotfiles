@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# bulkrename script
+
+tmp="/tmp/bulkrename.tmp"
+i=1
+
+ls -p "$@" |
+	tee $tmp |
+	vipe |
+	while read line
+	do
+		sed -n ''$i'p' $tmp
+		echo $line
+		i=$(($i+1))
+	done |
+	xargs -d "\n" -n2 mv --strip-trailing-slashes 2> /dev/null
+rm $tmp
