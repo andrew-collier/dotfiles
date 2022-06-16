@@ -6,6 +6,7 @@ filename="$( echo "$1" | sed 's/.*\/\(.*$\)/\1/')"
 wpd="${XDG_CACHE_HOME:-$HOME/.cache}/currentwallpaper"
 rm $wpd/*
 cp "$1" "$wpd/$filename"
+cp "$1" "${XDG_CACHE_HOME:-$HOME/.cache}/wallpaper"
 kill -HUP $(pgrep -u $USER "\bdwm$")
 killall dunst && dunst &
 [ -f "$HOME/.fehbg" ] && rm "$HOME/.fehbg"
