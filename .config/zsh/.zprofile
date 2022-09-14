@@ -20,9 +20,6 @@ export PATH="$PATH:${$(find $HOME/.local/scripts -type d -printf %p:)%%:}:${$(fi
 
 # Virtual server ssh
 eval $(ssh-agent -s)
-export KUMO="144.202.82.53"
-export BW_SESSION="6SinB1EUInXdTZfHeWPmT+eUj/F4cSIQdcRTG0FdWJ4fu3tMy60w9N16tJ3Q17x6C942XzsjICoL5wrGwdIq4w=="
-
 
 # Default Programs
 export TERMINAL="st"
