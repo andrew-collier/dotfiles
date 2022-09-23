@@ -72,12 +72,9 @@ abbrevs+=(
 
 # Shortening long commands
 abbrevs+=(
-    "e" "$EDITOR"
-	"kumo" "ssh -i $HOME/.ssh/kumo.key drew@144.202.82.53 -p 22"
 	"br" "bulkrename"
 	"es" "edit-script"
 	"yt" "pipe-viewer"
-	"replika" "replika-nativefier"
 )
 
 # Pacman
